@@ -2,6 +2,7 @@ class Location {
   final String id;
   final String name;
   final List<Brand> brands;
+  bool opened = false;
 
   Location({this.id, this.name, this.brands});
 
@@ -108,4 +109,30 @@ class Item {
       description: json['desc'] ?? "",
     );
   }
+}
+
+class Schedule {
+  final String id;
+  final String start;
+  final String end;
+  final int endHour;
+  final int endMinute;
+  final int startHour;
+  final int startMinute;
+
+  Schedule({this.id, this.start, this.end, this.endHour, this.endMinute,
+      this.startHour, this.startMinute});
+
+  factory Schedule.fromJson(Map<String, dynamic> json) {
+    return new Schedule(
+      id: json['id'],
+      start: json['start'],
+      end: json['end'],
+      endHour: json['end_hour'],
+      endMinute: json['end_minute'],
+      startHour: json['start_hour'],
+      startMinute: json['start_minute'],
+    );
+  }
+
 }

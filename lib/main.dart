@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:tntech_dining_app/api.dart';
 import 'package:tntech_dining_app/models.dart';
+import 'package:tntech_dining_app/repo.dart';
 
 void main() => runApp(new MyApp());
 
@@ -33,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage>
     with SingleTickerProviderStateMixin {
   var _date = new DateTime.now();
-  var _formatter = new DateFormat.yMMMEd();
+  var _formatter = new DateFormat.MMMEd();
   Set<Location> _favorites = new Set();
   TabController _tabCtrl;
 
@@ -56,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage>
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: new Text(_formatter.format(_date)),
+        centerTitle: true,
         bottom: new TabBar(
           controller: _tabCtrl,
           tabs: [
@@ -63,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage>
               text: "Favorites",
             ),
             new Tab(
-              text: "All Places",
+              text: "Locations",
             )
           ],
         ),
@@ -72,8 +74,8 @@ class _MyHomePageState extends State<MyHomePage>
         controller: _tabCtrl,
         children: [
           _buildFavoritesTab(DefaultTabController.of(context)),
-          new FutureBuilder<List<Location>>(
-              future: fetchAllLocations(),
+          new FutureBuilder<Set<Location>>(
+              future: loadLocations(_date),
               builder: (context, snapshot) {
                 if (snapshot.hasData) {
                   return new ListView(
@@ -109,7 +111,7 @@ class _MyHomePageState extends State<MyHomePage>
             new RaisedButton(
               color: Theme.of(context).primaryColor,
               child: new Text(
-                "View Places",
+                "View Locations",
                 style: new TextStyle(
                   color: Colors.white,
                 ),
@@ -134,6 +136,7 @@ class _MyHomePageState extends State<MyHomePage>
       favorites.add(new Column(
         children: <Widget>[
           new ListTile(
+            enabled: location.opened,
             title: new Text(location.name),
             leading: new IconButton(
                 icon: _chooseIcon(location),
@@ -149,13 +152,15 @@ class _MyHomePageState extends State<MyHomePage>
     return favorites;
   }
 
-  List<Widget> _buildList(List<Location> locations) {
+  List<Widget> _buildList(Set<Location> locations) {
+    print("Building");
     List<Widget> items = new List();
     for (var location in locations) {
       if (location.name != null)
         items.add(new Column(
           children: <Widget>[
             new ListTile(
+              enabled: location.opened,
               title: new Text(location.name),
               leading: new IconButton(
                   icon: _chooseIcon(location),
@@ -207,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage>
   Future<Null> _changeDate(BuildContext context) async {
     var now = new DateTime.now();
     var ini = now.isBefore(_date) ? _date : now;
-    var lst = now.add(new Duration(days: 15));
+    var lst = now.add(new Duration(days: 31));
     DateTime picked = await showDatePicker(
       context: context,
       initialDate: ini,
