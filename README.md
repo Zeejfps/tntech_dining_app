@@ -1,8 +1,4 @@
-# tntech_dining_app
+# TN Tech Dining App
 
-A new Flutter project.
-
-## Getting Started
-
-For help getting started with Flutter, view our online
-[documentation](https://flutter.io/).
+App that shows the menus for various dining places around Tennessee Tech University.
+Created as a way to learn the Flutter framework.
